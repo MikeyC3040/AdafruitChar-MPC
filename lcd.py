@@ -59,7 +59,7 @@ class Background:
 		client.timeout = 10
 		client.idletimeout = None
 		connection = False
-		self.write("Connecting...")
+		self.write("Connecting...   \n                ")
 		while connection == False:
 			try:
 				client.connect("localhost", 6600)
