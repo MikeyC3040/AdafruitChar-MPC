@@ -210,7 +210,7 @@ class Background:
 				self.random = 0
 			self.client.random(self.random)
 			self.screen = "mopidySettings"
-		elif self.screen == "shuffle":
+		elif self.screen == "repeat":
 			if dir == "Left":
 				self.repeat = 1
 			if dir == "Right":
