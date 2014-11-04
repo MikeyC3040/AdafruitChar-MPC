@@ -167,7 +167,7 @@ class Background:
 		elif self.screen == "power":
 			self.write("{:^16}\n{:<6}{:^4}{:>6}".format("Power:","OFF"," ","REBT"))
 		elif self.screen == "ip":
-			ipaddress = get_ip_address("wlan0")
+			ipaddress = self.get_ip_address("wlan0")
 			self.write("IP Address:\n{:<16}".format(ipaddress))
 
 	def button(self,dir):
