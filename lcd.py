@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from math import ceil
 from mpd import MPDClient
 from time import sleep
-import socket, os
+import socket, os, fcntl, struct
 import time
 
 from lcdScroll import Scroller
@@ -29,7 +29,15 @@ class Background:
 		self.updateTrack = True
 		self.updateState = True
 		self.updateTime = True
-			
+	
+	def get_ip_address(ifname):
+		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		return socket.inet_ntoa(fcntl.ioctl(
+			s.fileno(),
+			0x8915,  # SIOCGIFADDR
+			struct.pack('256s', ifname[:15])
+		)[20:24])
+	
 	def refresh_mpd(self):
 		if self.screen == "main":
 			if self.reconnect:
@@ -159,7 +167,7 @@ class Background:
 		elif self.screen == "power":
 			self.write("{:^16}\n{:<6}{:^4}{:>6}".format("Power:","OFF"," ","REBT"))
 		elif self.screen == "ip":
-			ipaddress = socket.gethostbyname(socket.gethostname())
+			ipaddress = get_ip_address("wlan0")
 			self.write("IP Address:\n{:<16}".format(ipaddress))
 
 	def button(self,dir):
