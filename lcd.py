@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from math import ceil
 from mpd import MPDClient
 from time import sleep
-import socket, os, fcntl, struct
+import socket, os
 import time
 
 from lcdScroll import Scroller
@@ -30,14 +30,13 @@ class Background:
 		self.updateState = True
 		self.updateTime = True
 	
-	def get_ip_address(ifname):
+	def get_ip(self):
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		return socket.inet_ntoa(fcntl.ioctl(
-			s.fileno(),
-			0x8915,  # SIOCGIFADDR
-			struct.pack('256s', ifname[:15])
-		)[20:24])
-	
+		s.connect(('google.com', 0))
+		ip = s.getsockname()[0]
+		s.close()
+		return ip
+		
 	def refresh_mpd(self):
 		if self.screen == "main":
 			if self.reconnect:
@@ -167,7 +166,7 @@ class Background:
 		elif self.screen == "power":
 			self.write("{:^16}\n{:<6}{:^4}{:>6}".format("Power:","OFF"," ","REBT"))
 		elif self.screen == "ip":
-			ipaddress = self.get_ip_address("wlan0")
+			ipaddress = self.get_ip()
 			self.write("IP Address:\n{:<16}".format(ipaddress))
 
 	def button(self,dir):
@@ -191,8 +190,14 @@ class Background:
 			if dir == "Down":
 				self.set_vol(-5)
 			if dir == "Select":
-				self.get_playlist()
-				self.screen = "playlists"
+				try:
+					self.write("{:16}\n{:16}".format("Laoding","Playlists..."))
+					self.get_playlist()
+					self.screen = "playlists"
+				except:
+					self.write("NO PLAYLISTS")
+					sleep(3)
+					self.screen = "mopidySettings"
 		elif self.screen == "playlists":
 			if dir == "Up":
 				self.listVal = 0 if self.listVal >= len(self.playlists)-3 else self.listVal+2
@@ -245,9 +250,11 @@ class Background:
 		elif self.screen == "power":
 			if dir == "Left":
 				os.system("shutdown -h now")
+				self.quit_nicely()
 				self.screen = "settings"
 			if dir == "Right":
 				os.system("reboot")
+				self.quit_nicely()
 				self.screen = "settings"
 			if dir == "Select":
 				self.screen = "settings"
