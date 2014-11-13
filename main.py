@@ -28,7 +28,7 @@ def main():
 				updateTime = datetime.now()+timedelta(milliseconds=500)
 				back.refresh_mpd()
 				back.display()
-	except:
+	except KeyboardInterrupt:
 		back.quit_nicely()
 
 main()

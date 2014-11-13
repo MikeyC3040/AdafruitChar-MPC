@@ -191,11 +191,11 @@ class Background:
 				self.set_vol(-5)
 			if dir == "Select":
 				try:
-					self.write("{:16}\n{:16}".format("Laoding","Playlists..."))
+					self.write("{:16}\n{:16}".format("Loading","Playlists..."))
 					self.get_playlist()
 					self.screen = "playlists"
 				except:
-					self.write("NO PLAYLISTS")
+					self.write("NO PLAYLISTS\n                          ")
 					sleep(3)
 					self.screen = "mopidySettings"
 		elif self.screen == "playlists":
@@ -285,6 +285,8 @@ class Background:
 	def get_playlist(self):
 		for list in self.client.listplaylists():
 			self.playlists.append(list['playlist'])
+		if len(self.playlits) == 0:
+			raise
 	
 	def load_playlist(self,item):
 		self.client.clear()
